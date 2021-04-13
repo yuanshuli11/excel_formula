@@ -9,7 +9,7 @@ import (
 var precedence = map[string]int{"=":10, "+": 20, "-": 20, "*": 40, "/": 40, "%": 40, "^": 60}
 
 type ExprAST interface {
-	toStr() string
+	ToStr() string
 }
 
 type NumberExprAST struct {
@@ -39,8 +39,8 @@ func (b BinaryExprAST) toStr() string {
 	return fmt.Sprintf(
 		"BinaryExprAST: (%s %s %s)",
 		b.Op,
-		b.Lhs.toStr(),
-		b.Rhs.toStr(),
+		b.Lhs.ToStr(),
+		b.Rhs.ToStr(),
 	)
 }
 
