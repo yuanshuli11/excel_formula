@@ -22,8 +22,8 @@ type Token struct {
 	// type with Literal/Operator
 	Type,
 	Flag int
-
 	Offset int
+	NoUse  bool
 }
 
 type Parser struct {
@@ -31,8 +31,7 @@ type Parser struct {
 
 	ch     byte
 	offset int
-
-	err error
+	err    error
 }
 
 func Parse(s string) ([]*Token, error) {
@@ -50,17 +49,22 @@ func Parse(s string) ([]*Token, error) {
 
 func (p *Parser) parse() []*Token {
 	toks := make([]*Token, 0)
+	var lastTok *Token
 	for {
-		tok := p.nextTok()
+		tok := p.nextTok(lastTok)
 		if tok == nil {
 			break
 		}
+		if tok.NoUse {
+			continue
+		}
 		toks = append(toks, tok)
+		lastTok = tok
 	}
 	return toks
 }
 
-func (p *Parser) nextTok() *Token {
+func (p *Parser) nextTok(last *Token) *Token {
 	if p.offset >= len(p.Source) || p.err != nil {
 		return nil
 	}
@@ -79,7 +83,8 @@ func (p *Parser) nextTok() *Token {
 		'*',
 		'/',
 		'^',
-		'=',
+		'<',
+		'>',
 		'%':
 		tok = &Token{
 			Tok:  string(p.ch),
@@ -87,7 +92,20 @@ func (p *Parser) nextTok() *Token {
 		}
 		tok.Offset = start
 		err = p.nextCh()
+	case
+		'=':
+		tok = &Token{
+			Tok:  string(p.ch),
+			Type: Operator,
+		}
+		if last.Tok == "<" || last.Tok == ">" {
+			last.Tok += "="
+			tok.NoUse = true
+		}
 
+		tok.Offset = start
+
+		err = p.nextCh()
 	case
 		'0',
 		'1',

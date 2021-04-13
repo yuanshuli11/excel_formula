@@ -6,7 +6,8 @@ import (
 	"strconv"
 )
 
-var precedence = map[string]int{"=":10, "+": 20, "-": 20, "*": 40, "/": 40, "%": 40, "^": 60}
+var precedence = map[string]int{"=": 10, "<": 10, "<=": 10, ">": 10, ">=": 10, "+": 20, "-": 20, "*": 40, "/": 40, "%": 40,
+	"^": 60}
 
 type ExprAST interface {
 	toStr() string
