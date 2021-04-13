@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 var precedence = map[string]int{"=": 10, "<": 10, "<=": 10, ">": 10, ">=": 10, "+": 20, "-": 20, "*": 40, "/": 40, "%": 40,
@@ -125,7 +126,7 @@ func (a *AST) parseNumber() NumberExprAST {
 }
 
 func (a *AST) parseFunCallerOrConst() ExprAST {
-	name := a.currTok.Tok
+	name := strings.ToLower(a.currTok.Tok)
 	a.getNextToken()
 	// call func
 	if a.currTok.Tok == "(" {
@@ -147,7 +148,7 @@ func (a *AST) parseFunCallerOrConst() ExprAST {
 			exprs = append(exprs, a.ParseExpression())
 		}
 		def := defFunc[name]
-		if len(exprs) != def.argc {
+		if len(exprs) != def.argc && def.argc != -1 {
 			a.Err = errors.New(
 				fmt.Sprintf("wrong way calling function `%s`, parameters want %d but get %d\n%s",
 					name,

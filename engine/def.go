@@ -41,12 +41,27 @@ func init() {
 
 		"max": {2, defMax},
 		"min": {2, defMin},
+		"ifs": {-1, defIfs},
 	}
 }
 
 // sin(pi/2) = 1
 func defSin(expr ...ExprAST) float64 {
 	return math.Sin(expr2Radian(expr[0]))
+}
+
+// sin(pi/2) = 1
+func defIfs(expr ...ExprAST) float64 {
+	length := len(expr)
+	for i, v := range expr {
+		if i+1 == length {
+			return float64(0)
+		}
+		if ExprASTResult(v) == 1 {
+			return ExprASTResult(expr[i+1])
+		}
+	}
+	return float64(0)
 }
 
 // cos(0) = 1

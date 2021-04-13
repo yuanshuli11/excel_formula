@@ -68,6 +68,7 @@ func TestParseAndExecSimple(t *testing.T) {
 		{"1>=2", 0},
 		{"3>2", 1},
 		{"3>=2", 1},
+		{"IFS(10>80,80,10>70,70,10>5,5)", 5},
 	}
 	for _, e := range exprs {
 		r, _ := ParseAndExec(e.Expr)
