@@ -13,6 +13,7 @@ import (
 // Analytical expression and execution
 // err is not nil if an error occurs (including arithmetic runtime errors)
 func ParseAndExec(s string) (r float64, err error) {
+	s = strings.ReplaceAll(strings.ToLower(s), ".math(", "(")
 	toks, err := Parse(s)
 	if err != nil {
 		return 0, err
@@ -89,12 +90,7 @@ func RegFunction(name string, argc int, fun func(...ExprAST) float64) error {
 	if len(name) == 0 {
 		return errors.New("RegFunction name is not empty.")
 	}
-	if argc < 1 {
-		return errors.New("RegFunction argc is must has one arg at least.")
-	}
-	if _, ok := defFunc[name]; ok {
-		return errors.New("RegFunction name is already exist.")
-	}
+
 	defFunc[name] = defS{argc, fun}
 	return nil
 }
